@@ -1,13 +1,22 @@
 #pragma once
 #include <string>
+#include <vector>
+#include <fstream>
 
 using namespace std;
 
+struct Order {
+    double price;
+    int quantity;
+    string type;  // "buy" or "sell"
+};
+
 class GenerateData {
 private:
-    long double price;
-    int amount;
-    string type;
+    vector<Order> orders;
+    string outputPath = "data/orders.csv";
 public:
+    void AddOrder(double price, int quantity, const string& type);
     void Generate();
+    void SaveToCSV();
 };
