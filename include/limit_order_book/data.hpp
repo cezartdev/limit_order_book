@@ -11,7 +11,7 @@ struct Order {
     string type;  // "buy" or "sell"
 };
 
-class GenerateData {
+class Data {
 private:
     vector<Order> orders;
     string outputPath = "data/orders.csv";
@@ -19,4 +19,10 @@ public:
     void AddOrder(double price, int quantity, const string& type);
     void Generate();
     void SaveToCSV();
+    
+
+    bool LoadFromCSV(const string& path = "data/orders.csv");
+    vector<Order>& GetOrders();
+    size_t GetOrderCount();
 };
+

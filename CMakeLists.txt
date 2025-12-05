@@ -12,20 +12,16 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
 
-add_subdirectory(libs/generate-data)
-
 add_executable(${PROJECT_NAME}
     src/main.cpp
+    src/data.cpp
 )
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-)
-
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE
-        generate_data
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_compile_options(${PROJECT_NAME}

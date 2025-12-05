@@ -1,13 +1,13 @@
 #include <iostream>
-#include <generate_data.hpp>
-#include <constants.hpp>
+#include <limit_order_book/data.hpp>
+#include <internal/constants.hpp>
 
 using namespace std;
 using namespace Colors;
 using namespace Styles;
 
-int main() {
-
+int main()
+{
 
     /* Menu */
     cout << endl;
@@ -16,7 +16,7 @@ int main() {
     cout << endl;
     cout << "  " << CYAN << "1: Generate data" << "    " << "2: Simulation" << "    " << "3: Help" << RESET << endl;
     cout << endl;
-    
+
     /* Select */
     int option;
     cout << "Option: ";
@@ -25,17 +25,32 @@ int main() {
     cout << RESET;
     cout << endl;
 
-    switch (option) {
-        case 1: {
-            GenerateData data;
-
-            data.Generate();
-
-
-            break;
+    switch (option)
+    {
+    case 1:
+    {
+        Data data;
+        data.Generate();
+        break;
+    }
+    case 2:
+    {
+        Data data;
+        if (data.LoadFromCSV()) {
+            cout << "Simulation started..." << endl;
+            
+            for (const Order& order : data.GetOrders()) {
+                cout
+                    << "Price: " << order.price 
+                    << " | Qty: " << order.quantity 
+                    << " | Type: " << order.type
+                << endl;
+            }
         }
-        default:
-            break;
+        break;
+    }
+    default:
+        break;
     }
 
     return 0;

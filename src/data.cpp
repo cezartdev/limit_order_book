@@ -1,14 +1,15 @@
-#include <generate_data.hpp>
+#include <limit_order_book/data.hpp>
 #include <iostream>
 #include <random>
+#include <sstream>
 
 using namespace std;
 
-void GenerateData::AddOrder(double price, int quantity, const string& type) {
+void Data::AddOrder(double price, int quantity, const string& type) {
     orders.push_back({price, quantity, type});
 }
 
-void GenerateData::Generate() {
+void Data::Generate() {
     cout << "Generating data..." << endl;
 
     // Random number generator
@@ -30,7 +31,7 @@ void GenerateData::Generate() {
     cout << "Data generated successfully! (" << orders.size() << " orders)" << endl;
 }
 
-void GenerateData::SaveToCSV() {
+void Data::SaveToCSV() {
     ofstream file(outputPath);
     
     if (!file.is_open()) {
@@ -48,4 +49,48 @@ void GenerateData::SaveToCSV() {
 
     file.close();
     cout << "CSV saved to: " << outputPath << endl;
+}
+
+bool Data::LoadFromCSV(const string& path) {
+    ifstream file(path);
+    
+    if (!file.is_open()) {
+        cerr << "Error: Could not open file " << path << endl;
+        return false;
+    }
+
+    orders.clear();
+    string line;
+    
+    // Skip header
+    getline(file, line);
+
+    // Read data
+    while (getline(file, line)) {
+        stringstream ss(line);
+        string priceStr, quantityStr, type;
+        
+        getline(ss, priceStr, ',');
+        getline(ss, quantityStr, ',');
+        getline(ss, type, ',');
+
+        Order order;
+        order.price = stod(priceStr);
+        order.quantity = stoi(quantityStr);
+        order.type = type;
+        
+        orders.push_back(order);
+    }
+
+    file.close();
+    cout << "Loaded " << orders.size() << " orders from " << path << endl;
+    return true;
+}
+
+vector<Order>& Data::GetOrders() {
+    return orders;
+}
+
+size_t Data::GetOrderCount() {
+    return orders.size();
 }
