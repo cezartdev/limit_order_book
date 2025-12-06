@@ -11,9 +11,9 @@ void Lob::AddOrder(const Order& order) {
     if (order.type == "buy") {
         int remainingQuantity = order.quantity;
 
-        // Siempre miramos el mejor ask disponible, evitando invalidar iteradores.
+        // Always look at the best available ask, avoiding iterator invalidation.
         while (remainingQuantity > 0 && !lob.asks.empty() && lob.asks.begin()->first <= order.price) {
-            auto it = lob.asks.begin(); // mejor ask (menor precio)
+            auto it = lob.asks.begin(); // best ask (lowest price)
             auto& priceLevel = it->second;
 
             while (remainingQuantity > 0 && !priceLevel.empty()) {
@@ -21,7 +21,7 @@ void Lob::AddOrder(const Order& order) {
 
                 int tradeQty = min(remainingQuantity, sellOrder.quantity);
 
-                // Registrar transacción (orden entrante = buy)
+                // Record trade (incoming order = buy)
                 trades.push_back({it->first, tradeQty, orderIdCounter, 0});
 
                 remainingQuantity -= tradeQty;
@@ -32,13 +32,13 @@ void Lob::AddOrder(const Order& order) {
                 }
             }
 
-            // Si se vació el nivel de precio, eliminarlo con iterador válido
+            // If the price level is empty, erase it with a valid iterator
             if (priceLevel.empty()) {
                 lob.asks.erase(it);
             }
         }
 
-        // Si queda cantidad sin emparejar, agregar al lado de compras
+        // If there is remaining quantity, add it to bids
         if (remainingQuantity > 0) {
             newOrder.quantity = remainingQuantity;
             lob.bids[order.price].push_back(newOrder);
@@ -47,9 +47,9 @@ void Lob::AddOrder(const Order& order) {
     } else {  // "sell"
         int remainingQuantity = order.quantity;
 
-        // Procesar siempre el mejor bid disponible (precio más alto)
+        // Always process the best available bid (highest price)
         while (remainingQuantity > 0 && !lob.bids.empty() && lob.bids.rbegin()->first >= order.price) {
-            auto it = prev(lob.bids.end()); // iterador al mayor precio (mejor bid)
+            auto it = prev(lob.bids.end()); // iterator to highest price (best bid)
             auto& priceLevel = it->second;
 
             while (remainingQuantity > 0 && !priceLevel.empty()) {
@@ -57,7 +57,7 @@ void Lob::AddOrder(const Order& order) {
 
                 int tradeQty = min(remainingQuantity, buyOrder.quantity);
 
-                // Registrar transacción (orden entrante = sell)
+                // Record trade (incoming order = sell)
                 trades.push_back({it->first, tradeQty, 0, orderIdCounter});
 
                 remainingQuantity -= tradeQty;
@@ -68,13 +68,13 @@ void Lob::AddOrder(const Order& order) {
                 }
             }
 
-            // Si se vació el nivel de precio, eliminarlo con iterador válido
+            // If the price level is empty, erase it with a valid iterator
             if (priceLevel.empty()) {
                 lob.bids.erase(it);
             }
         }
 
-        // Si queda cantidad sin emparejar, agregar al lado de ventas
+        // If there is remaining quantity, add it to asks
         if (remainingQuantity > 0) {
             newOrder.quantity = remainingQuantity;
             lob.asks[order.price].push_back(newOrder);
@@ -117,7 +117,7 @@ int Lob::GetAskQuantityAtPrice(double price) const {
 void Lob::PrintLOB() const {
     cout << "\n=== LIMIT ORDER BOOK ===" << endl;
     
-    // Mostrar asks (de menor a mayor precio)
+    // Display asks (low to high)
     cout << "\nASKS (Sell Orders):" << endl;
     for (const auto& [price, orders] : lob.asks) {
         int totalQty = 0;
@@ -130,7 +130,7 @@ void Lob::PrintLOB() const {
     cout << "\n--- SPREAD ---" << endl;
     cout << "Best Bid: $" << GetBestBid() << " | Best Ask: $" << GetBestAsk() << endl;
     
-    // Mostrar bids (de mayor a menor precio)
+    // Display bids (high to low)
     cout << "\nBIDS (Buy Orders):" << endl;
     for (auto it = lob.bids.rbegin(); it != lob.bids.rend(); ++it) {
         int totalQty = 0;

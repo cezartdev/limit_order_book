@@ -7,7 +7,7 @@
 
 using namespace std;
 
-// Estructura para registrar transacciones
+// Structure to record trades
 struct Trade {
     double price;
     int quantity;
@@ -15,12 +15,12 @@ struct Trade {
     uint64_t sellOrderId;
 };
 
-// Estructura LOB mejorada
+// Improved LOB structure
 struct LOBData {
-    // map mantiene precios ordenados automáticamente (O(log n))
-    // rbegin() accede directamente al mejor bid/ask
-    map<double, deque<Order>> bids;   // Ordenado de mayor a menor
-    map<double, deque<Order>> asks;   // Ordenado de menor a mayor
+    // map keeps prices automatically sorted (O(log n))
+    // rbegin()/begin() give direct access to best bid/ask
+    map<double, deque<Order>> bids;   // Descending
+    map<double, deque<Order>> asks;   // Ascending
 };
 
 class Lob
@@ -31,19 +31,19 @@ private:
     uint64_t orderIdCounter = 0;
 
 public:
-    // Insertar orden (con matching automático)
+    // Insert order with automatic matching
     void AddOrder(const Order& order);
     
-    // Getters para best bid/ask (acceso O(1))
+    // Best bid/ask getters (O(1) access)
     double GetBestBid() const;
     double GetBestAsk() const;
     int GetBidQuantityAtPrice(double price) const;
     int GetAskQuantityAtPrice(double price) const;
     
-    // Consultar el libro
+    // Inspect the book
     void PrintLOB() const;
     
-    // Obtener transacciones
+    // Retrieve executed trades
     const vector<Trade>& GetTrades() const;
     size_t GetTradeCount() const;
 };
