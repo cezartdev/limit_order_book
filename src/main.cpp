@@ -1,6 +1,9 @@
 #include <iostream>
 #include <limit_order_book/data.hpp>
+#include <limit_order_book/lob.hpp>
 #include <internal/constants.hpp>
+#include <thread>
+#include <chrono>
 
 using namespace std;
 using namespace Colors;
@@ -37,17 +40,40 @@ int main()
     {
         Data data;
         if (data.LoadFromCSV()) {
-            cout << "Simulation started..." << endl;
+            cout << endl;
+            cout << PURPLE << "Simulation started..." << RESET << endl;
+            cout << endl;
             
+            const int waitingTime = 3;
+            int count = 1;
+            Lob lob;
+
             for (const Order& order : data.GetOrders()) {
+                #ifdef _WIN32
+                    system("cls");
+                #else
+                    cout << "\x1B[2J\x1B[H";
+                    cout.flush();
+                #endif
+                cout << CYAN << "Order counter: " << count << CYAN << endl;
+                count++;
+
                 cout
-                    << "Price: " << order.price 
-                    << " | Qty: " << order.quantity 
-                    << " | Type: " << order.type
-                << endl;
+                << PURPLE 
+                << "Price: " << order.price 
+                << " | Qty: " << order.quantity 
+                << " | Type: " << order.type
+                << RESET << endl;
+                lob.AddOrder(order);
+                lob.PrintLOB();
+                lob.GetTrades();
+                this_thread::sleep_for(chrono::seconds(waitingTime));
             }
         }
         break;
+    }
+    case 3:{
+        cout << "" << endl;
     }
     default:
         break;

@@ -2,14 +2,10 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <limit_order_book/order.hpp>
 
 using namespace std;
 
-struct Order {
-    double price;
-    int quantity;
-    string type;  // "buy" or "sell"
-};
 
 class Data {
 private:

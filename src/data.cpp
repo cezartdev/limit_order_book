@@ -1,9 +1,11 @@
 #include <limit_order_book/data.hpp>
+#include <internal/constants.hpp>
 #include <iostream>
 #include <random>
 #include <sstream>
 
 using namespace std;
+using namespace Colors;
 
 void Data::AddOrder(double price, int quantity, const string& type) {
     orders.push_back({price, quantity, type});
@@ -15,7 +17,7 @@ void Data::Generate() {
     // Random number generator
     random_device rd;
     mt19937 gen(rd());
-    uniform_real_distribution<> priceDist(90.0, 110.0);  // Prices between 90 and 110
+    uniform_real_distribution<> priceDist(50.0, 110.0);  // Prices between 50 and 110
     uniform_int_distribution<> quantityDist(1, 100);     // Quantities between 1 and 100
     uniform_int_distribution<> typeDist(0, 1);           // 0 = buy, 1 = sell
 
@@ -83,7 +85,8 @@ bool Data::LoadFromCSV(const string& path) {
     }
 
     file.close();
-    cout << "Loaded " << orders.size() << " orders from " << path << endl;
+    cout << endl;
+    cout << GREEN << "Loaded " << orders.size() << " orders from " << path << RESET << endl;
     return true;
 }
 

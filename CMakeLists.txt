@@ -15,6 +15,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
 add_executable(${PROJECT_NAME}
     src/main.cpp
     src/data.cpp
+    src/lob.cpp
 )
 
 target_include_directories(${PROJECT_NAME}
